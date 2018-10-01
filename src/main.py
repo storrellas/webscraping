@@ -57,9 +57,10 @@ if __name__ == "__main__":
     print(len(link_list))
 
     day = 1
+    print(link_list[0])
 
     # Treat first request
-    raw_html = simple_get(base_url + a['href'])
+    raw_html = simple_get(base_url + link_list[0])
 
     # Scrap table
     html = BeautifulSoup(raw_html, 'html.parser')
@@ -78,12 +79,15 @@ if __name__ == "__main__":
         # Get formatted year
         year = int(item[-1])
         date = datetime.datetime(year, 1, 1) + datetime.timedelta(day - 1)
-        item.insert(0, date.strftime("%Y%m%d"))
+        #item.insert(0, date.strftime("%Y%m%d"))
+        birthdate = date.isoformat()[0:10]
+        birthdate = birthdate.replace('-','')
+        item.insert(0, birthdate)
         print(item)
         item = item[:-1]
 
-        if i == 2:
-            break
+        # if i == 2:
+        #     break
 
 
 
