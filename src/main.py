@@ -2,6 +2,7 @@ from requests import get
 from requests.exceptions import RequestException
 from contextlib import closing
 from bs4 import BeautifulSoup
+import datetime
 
 
 def simple_get(url):
@@ -55,18 +56,18 @@ if __name__ == "__main__":
     # Generated link list
     print(len(link_list))
 
+    day = 1
+
     # Treat first request
     raw_html = simple_get(base_url + a['href'])
 
     # Scrap table
     html = BeautifulSoup(raw_html, 'html.parser')
     for i, tr in enumerate(html.select('.bq_left table tbody tr')):
-        print(i, tr)
         item = []
         print("-- item --")
-        for i, td in enumerate(tr.select('td')):
-            print(td)
-            if i == 0:
+        for j, td in enumerate(tr.select('td')):
+            if j == 0:
                 index = td.text.rfind(' ')
                 item.append(td.text[0:index])
                 item.append(td.text[index+1:])
@@ -74,11 +75,17 @@ if __name__ == "__main__":
                 str = td.text.replace('\n','')
                 item.append(str)
 
-
+        # Get formatted year
+        year = int(item[-1])
+        date = datetime.datetime(year, 1, 1) + datetime.timedelta(day - 1)
+        print(date)
+        print(date.strftime("%Y%m%d"))
+        item.insert(0, date.strftime("%Y%m%d"))
         print(item)
+        item = item[:-1]
 
-
-        break
+        if i == 2:
+            break
 
 
 
