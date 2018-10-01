@@ -3,6 +3,8 @@ from requests.exceptions import RequestException
 from contextlib import closing
 from bs4 import BeautifulSoup
 import datetime
+import sys
+import jsonlines
 
 
 def simple_get(url):
@@ -66,8 +68,25 @@ def generate_item(row, day):
     return item
 
 if __name__ == "__main__":
+
+
+
     base_url = 'https://www.brainyquote.com'
     print("-- Script init --")
+
+
+###########################################
+    array = ['199101010', 'Frank', 'Sinatra', 'singer']
+    #with jsonlines.open('output.jsonl', mode='w') as writer:
+    #    writer.write(array)
+
+    writer = jsonlines.open('output.jsonl', mode='w')
+    writer.write(array)
+    writer.close()
+    print("Aborting Abruptly")
+    sys.exit()
+###########################################
+
     raw_html = simple_get(base_url + '/birthdays/')
     html = BeautifulSoup(raw_html, 'html.parser')
 
