@@ -42,7 +42,7 @@ def log_error(e):
     print(e)
 
 
-def generate_item(row):
+def generate_item(row, day):
     item = []
     for j, td in enumerate(row.select('td')):
         if j == 0:
@@ -60,7 +60,7 @@ def generate_item(row):
     birthdate = date.isoformat()[0:10]
     birthdate = birthdate.replace('-','')
     item.insert(0, birthdate)
-    print(item)
+    #print(item)
     item = item[:-1]
 
     return item
@@ -79,21 +79,37 @@ if __name__ == "__main__":
     # Generated link list
     print(len(link_list))
 
-    day = 1
-    print(link_list[0])
+    # Iterate over links
+    for i, date_link in enumerate(link_list):
+        # Get HTML content
+        day = i + 1
+        raw_html = simple_get(base_url + date_link)
 
-    # Treat first request
-    raw_html = simple_get(base_url + link_list[0])
+        # Scrap table
+        html = BeautifulSoup(raw_html, 'html.parser')
+        for j, tr in enumerate(html.select('.bq_left table tbody tr')):
+            item_list = []
+            item = generate_item(tr, day)
+            print(item)
 
-    # Scrap table
-    html = BeautifulSoup(raw_html, 'html.parser')
-    for i, tr in enumerate(html.select('.bq_left table tbody tr')):
-        item_list = []
-        item = generate_item(tr)
-        print(item)
+        if day == 2:
+            break
 
-        # if i == 2:
-        #     break
+    # day = 1
+    # print(link_list[0])
+    #
+    # # Treat first request
+    # raw_html = simple_get(base_url + link_list[0])
+    #
+    # # Scrap table
+    # html = BeautifulSoup(raw_html, 'html.parser')
+    # for i, tr in enumerate(html.select('.bq_left table tbody tr')):
+    #     item_list = []
+    #     item = generate_item(tr, day)
+    #     print(item)
+    #
+    #     # if i == 2:
+    #     #     break
 
 
 
