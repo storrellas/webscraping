@@ -56,13 +56,16 @@ def generate_item(row, day):
             item.append(str)
 
     # Get formatted year
-    year = int(item[-1])
-    date = datetime.datetime(year, 1, 1) + datetime.timedelta(day - 1)
-    #item.insert(0, date.strftime("%Y%m%d"))
-    birthdate = date.isoformat()[0:10]
-    birthdate = birthdate.replace('-','')
-    item.insert(0, birthdate)
-    #print(item)
+    try:
+        year = int(item[-1])
+        date = datetime.datetime(year, 1, 1) + datetime.timedelta(day - 1)
+        # NOTE: This does not work with dates <1900
+        #item.insert(0, date.strftime("%Y%m%d"))
+        birthdate = date.isoformat()[0:10]
+        birthdate = birthdate.replace('-','')
+        item.insert(0, birthdate)
+    except:
+        item.insert(0, '')
     item = item[:-1]
 
     return item
@@ -70,22 +73,11 @@ def generate_item(row, day):
 if __name__ == "__main__":
 
 
-
+    filename = 'output.jsonl'
     base_url = 'https://www.brainyquote.com'
     print("-- Script init --")
 
 
-###########################################
-    array = ['199101010', 'Frank', 'Sinatra', 'singer']
-    #with jsonlines.open('output.jsonl', mode='w') as writer:
-    #    writer.write(array)
-
-    writer = jsonlines.open('output.jsonl', mode='w')
-    writer.write(array)
-    writer.close()
-    print("Aborting Abruptly")
-    sys.exit()
-###########################################
 
     raw_html = simple_get(base_url + '/birthdays/')
     html = BeautifulSoup(raw_html, 'html.parser')
@@ -99,9 +91,19 @@ if __name__ == "__main__":
     print(len(link_list))
 
     # Iterate over links
+    writer = jsonlines.open(filename, mode='w')
     for i, date_link in enumerate(link_list):
+
         # Get HTML content
         day = i + 1
+        print("Processing day ", day, " of year")
+
+        #############################
+        # if day != 45:
+        #     continue
+        #############################
+
+        # Get Raw HTML
         raw_html = simple_get(base_url + date_link)
 
         # Scrap table
@@ -109,28 +111,11 @@ if __name__ == "__main__":
         for j, tr in enumerate(html.select('.bq_left table tbody tr')):
             item_list = []
             item = generate_item(tr, day)
-            print(item)
-
-        if day == 2:
-            break
-
-    # day = 1
-    # print(link_list[0])
-    #
-    # # Treat first request
-    # raw_html = simple_get(base_url + link_list[0])
-    #
-    # # Scrap table
-    # html = BeautifulSoup(raw_html, 'html.parser')
-    # for i, tr in enumerate(html.select('.bq_left table tbody tr')):
-    #     item_list = []
-    #     item = generate_item(tr, day)
-    #     print(item)
-    #
-    #     # if i == 2:
-    #     #     break
+            writer.write(item)
 
 
+    print("Your results should be in ", filename)
+    writer.close()
 
 
     print("-- Script End --")
