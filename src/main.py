@@ -43,6 +43,7 @@ def log_error(e):
 
 
 def generate_item(row):
+    item = []
     for j, td in enumerate(row.select('td')):
         if j == 0:
             index = td.text.rfind(' ')
@@ -88,28 +89,6 @@ if __name__ == "__main__":
     html = BeautifulSoup(raw_html, 'html.parser')
     for i, tr in enumerate(html.select('.bq_left table tbody tr')):
         item_list = []
-        """
-        item = []
-        print("-- item --")
-        for j, td in enumerate(tr.select('td')):
-            if j == 0:
-                index = td.text.rfind(' ')
-                item.append(td.text[0:index])
-                item.append(td.text[index+1:])
-            else:
-                str = td.text.replace('\n','')
-                item.append(str)
-
-        # Get formatted year
-        year = int(item[-1])
-        date = datetime.datetime(year, 1, 1) + datetime.timedelta(day - 1)
-        #item.insert(0, date.strftime("%Y%m%d"))
-        birthdate = date.isoformat()[0:10]
-        birthdate = birthdate.replace('-','')
-        item.insert(0, birthdate)
-        print(item)
-        item = item[:-1]
-        """
         item = generate_item(tr)
         print(item)
 
