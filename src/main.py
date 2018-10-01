@@ -78,8 +78,6 @@ if __name__ == "__main__":
         # Get formatted year
         year = int(item[-1])
         date = datetime.datetime(year, 1, 1) + datetime.timedelta(day - 1)
-        print(date)
-        print(date.strftime("%Y%m%d"))
         item.insert(0, date.strftime("%Y%m%d"))
         print(item)
         item = item[:-1]
